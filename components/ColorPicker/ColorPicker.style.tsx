@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const StlyedColorPicker = styled.div`
-  min-height: 55px;
+  min-height: 50px;
   display: flex;
   align-items: center;
   width: 100%;

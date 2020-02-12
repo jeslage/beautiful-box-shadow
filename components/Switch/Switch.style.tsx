@@ -5,7 +5,7 @@ interface SwitchProps {
 }
 
 const StyledSwitch = styled.div<SwitchProps>`
-  min-height: 55px;
+  min-height: 50px;
   display: flex;
   align-items: center;
   margin: 0;

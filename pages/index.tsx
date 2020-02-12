@@ -9,15 +9,21 @@ import Switch from "../components/Switch/Switch";
 import ColorPicker from "../components/ColorPicker/ColorPicker";
 
 const Panel = styled.aside`
-  position: fixed;
-  top: 0;
-  right: 0;
+  position: relative;
+  z-index: 999;
   max-width: 500px;
+  height: calc(100% - 4rem);
   width: 100%;
   background: #f4f4f4;
+  padding: 2rem;
 
-  .panel__wrapper {
-    padding: 2rem;
+  hr {
+    height: 1px;
+    background: ${props => props.theme.border};
+    outline: 0;
+    border: 0;
+    opacity: 0.5;
+    margin: 1rem 0;
   }
 `;
 
@@ -27,104 +33,116 @@ const Content = styled.main`
   justify-content: center;
   width: 100%;
   height: 100vh;
+
+  .content__shadowBox {
+    flex-grow: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 `;
 
 const IndexPage = () => {
-  const [minimized, setMinimized] = React.useState(true);
-
   const [boxShadow, setBoxShadow] = useState<BoxShadow>({
     horizontal: 0,
     vertical: 0,
-    blur: 0,
+    blur: 30,
     spread: 0,
-    inset: false,
-    color: "#000",
+    inset: true,
+    color: "#999",
     background: "#fff",
     width: 200,
-    height: 200
+    height: 200,
+    borderRadius: 0
   });
 
   return (
     <Content>
-      <ShadowBox {...boxShadow} />
+      <div className="content__shadowBox">
+        <ShadowBox {...boxShadow} />
+      </div>
 
       <Panel>
-        <button type="button" onClick={() => setMinimized(prev => !prev)}>
-          <svg viewBox="0 0 24 24" width="24" height="24">
-            <rect height="2" rx="1" width="12" x="6" y="11" />
-            {minimized && <rect height="12" rx="1" width="2" x="11" y="6" />}
-          </svg>
-        </button>
-        {!minimized && (
-          <div className="panel__wrapper">
-            <Range
-              label="Horizontal"
-              onChange={val =>
-                setBoxShadow(prev => ({ ...prev, horizontal: val }))
-              }
-              value={boxShadow.horizontal}
-              min={-100}
-            />
+        <Range
+          label="Horizontal"
+          onChange={val => setBoxShadow(prev => ({ ...prev, horizontal: val }))}
+          value={boxShadow.horizontal}
+          min={-100}
+          suffix="px"
+        />
 
-            <Range
-              label="Vertical"
-              onChange={val =>
-                setBoxShadow(prev => ({ ...prev, vertical: val }))
-              }
-              value={boxShadow.vertical}
-              min={-100}
-            />
+        <Range
+          label="Vertical"
+          onChange={val => setBoxShadow(prev => ({ ...prev, vertical: val }))}
+          value={boxShadow.vertical}
+          min={-100}
+          suffix="px"
+        />
 
-            <Range
-              label="Blur"
-              onChange={val => setBoxShadow(prev => ({ ...prev, blur: val }))}
-              value={boxShadow.blur}
-            />
+        <Range
+          label="Blur"
+          onChange={val => setBoxShadow(prev => ({ ...prev, blur: val }))}
+          value={boxShadow.blur}
+          suffix="px"
+        />
 
-            <Range
-              label="Spread"
-              onChange={val => setBoxShadow(prev => ({ ...prev, spread: val }))}
-              value={boxShadow.spread}
-              min={-100}
-            />
+        <Range
+          label="Spread"
+          onChange={val => setBoxShadow(prev => ({ ...prev, spread: val }))}
+          value={boxShadow.spread}
+          min={-100}
+          suffix="px"
+        />
 
-            <Range
-              label="Box Width"
-              onChange={val => setBoxShadow(prev => ({ ...prev, width: val }))}
-              value={boxShadow.width}
-              min={1}
-              max={500}
-            />
+        <Switch
+          label="Inset"
+          onChange={val => setBoxShadow(prev => ({ ...prev, inset: val }))}
+          value={boxShadow.inset}
+        />
 
-            <Range
-              label="Box Height"
-              onChange={val => setBoxShadow(prev => ({ ...prev, height: val }))}
-              value={boxShadow.height}
-              min={1}
-              max={500}
-            />
+        <hr />
 
-            <Switch
-              label="Inset"
-              onChange={val => setBoxShadow(prev => ({ ...prev, inset: val }))}
-              value={boxShadow.inset}
-            />
+        <ColorPicker
+          label="Shadow Color"
+          onChange={val => setBoxShadow(prev => ({ ...prev, color: val }))}
+          value={boxShadow.color}
+        />
 
-            <ColorPicker
-              label="Shadow Color"
-              onChange={val => setBoxShadow(prev => ({ ...prev, color: val }))}
-              value={boxShadow.color}
-            />
+        <ColorPicker
+          label="Background Color"
+          onChange={val => setBoxShadow(prev => ({ ...prev, background: val }))}
+          value={boxShadow.background}
+        />
 
-            <ColorPicker
-              label="Background Color"
-              onChange={val =>
-                setBoxShadow(prev => ({ ...prev, background: val }))
-              }
-              value={boxShadow.background}
-            />
-          </div>
-        )}
+        <hr />
+
+        <Range
+          label="Box Width"
+          onChange={val => setBoxShadow(prev => ({ ...prev, width: val }))}
+          value={boxShadow.width}
+          min={1}
+          max={500}
+          suffix="px"
+        />
+
+        <Range
+          label="Box Height"
+          onChange={val => setBoxShadow(prev => ({ ...prev, height: val }))}
+          value={boxShadow.height}
+          min={1}
+          max={500}
+          suffix="px"
+        />
+
+        <Range
+          label="Border Radius"
+          onChange={val =>
+            setBoxShadow(prev => ({ ...prev, borderRadius: val }))
+          }
+          value={boxShadow.borderRadius}
+          max={50}
+          suffix="%"
+        />
       </Panel>
     </Content>
   );

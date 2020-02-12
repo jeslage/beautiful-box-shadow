@@ -12,4 +12,5 @@ export interface BoxShadow {
   background: string;
   width: number;
   height: number;
+  borderRadius: number;
 }
