@@ -1,8 +1,8 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import React from "react";
-import Draggable from "react-draggable";
+import Draggable, { DraggableEventHandler } from "react-draggable";
 
-import { BoxShadow } from "../../definitions";
+import { BoxShadowWithAxis } from "../../definitions";
 
 const getBoxShadow = ({
   blur,
@@ -14,29 +14,45 @@ const getBoxShadow = ({
   background,
   width,
   height,
-  borderRadius
-}: BoxShadow) => {
+  borderRadius,
+  rotation
+}) => {
   const i = inset ? "inset" : "";
   const shadow = `${i} ${horizontal}px ${vertical}px ${blur}px ${spread}px ${color}`;
 
-  return css`
-    width: ${width}px;
-    height: ${height}px;
-    border-radius: ${borderRadius}%;
-    box-shadow: ${shadow};
-    background: ${background};
-  `;
+  return {
+    width: `${width}px`,
+    height: `${height}px`,
+    borderRadius: `${borderRadius}px`,
+    boxShadow: shadow,
+    transform: `rotate(${rotation}deg)`,
+    background,
+    transformOrigin: "center"
+  };
 };
 
 const StyledShadowBox = styled.div`
+  position: absolute;
   cursor: move;
-  ${getBoxShadow}
 `;
 
-const ShadowBox = props => (
-  <Draggable axis="both" defaultPosition={{ x: 0, y: 0 }} scale={1}>
-    <StyledShadowBox {...props} />
-  </Draggable>
-);
+interface ShadowBoxProps {
+  item: BoxShadowWithAxis;
+  onStop: DraggableEventHandler;
+  onClick?: Function;
+}
+
+const ShadowBox: React.FC<ShadowBoxProps> = ({ onStop, onClick, item }) => {
+  const { x, y, id, name, ...rest } = item;
+  return (
+    <Draggable axis="both" defaultPosition={{ x, y }} scale={1} onStop={onStop}>
+      <StyledShadowBox onClick={() => onClick && onClick()}>
+        <div id={id.toString()} style={getBoxShadow(rest)}>
+          {name}
+        </div>
+      </StyledShadowBox>
+    </Draggable>
+  );
+};
 
 export default ShadowBox;

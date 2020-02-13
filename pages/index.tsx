@@ -1,17 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
+import { useRouter } from "next/router";
+import { NextPage, NextPageContext } from "next";
 
-import { BoxShadow } from "../definitions";
+import useBoxShadows from "../hooks/useBoxShadows/useBoxShadows";
+import { encodeConfig, decodeConfig } from "../helper";
 
 import ShadowBox from "../components/ShadowBox/ShadowBox";
 import Range from "../components/Range/Range";
 import Switch from "../components/Switch/Switch";
 import ColorPicker from "../components/ColorPicker/ColorPicker";
 
+import { Config } from "../definitions";
+import useWindowEvent from "../hooks/useWindowEvent";
+
 const Panel = styled.aside`
   position: relative;
   z-index: 999;
-  max-width: 500px;
+  max-width: 400px;
   height: calc(100% - 4rem);
   width: 100%;
   background: #f4f4f4;
@@ -33,6 +39,7 @@ const Content = styled.main`
   justify-content: center;
   width: 100%;
   height: 100vh;
+  overflow: hidden;
 
   .content__shadowBox {
     flex-grow: 2;
@@ -42,110 +49,180 @@ const Content = styled.main`
   }
 `;
 
-const IndexPage = () => {
-  const [boxShadow, setBoxShadow] = useState<BoxShadow>({
-    horizontal: 0,
-    vertical: 0,
-    blur: 30,
-    spread: 0,
-    inset: true,
-    color: "#999",
-    background: "#fff",
-    width: 200,
-    height: 200,
-    borderRadius: 0
+const IndexPage: NextPage<{ queryConfig: Config }> = ({ queryConfig }) => {
+  const router = useRouter();
+
+  const {
+    currentItem,
+    updateCurrentItem,
+    addNewItem,
+    items,
+    updateItemPosition,
+    updateActiveItem,
+    resetItems,
+    duplicateItem
+  } = useBoxShadows(queryConfig);
+
+  useWindowEvent("keydown", e => {
+    e.preventDefault();
+    if (e.metaKey && e.keyCode === 68) {
+      duplicateItem();
+    }
   });
+
+  useEffect(() => {
+    router &&
+      router.replace(
+        { pathname: "/", query: { items, currentItem } },
+        `/?c=${encodeConfig({ items, currentItem })}`,
+        {
+          shallow: true
+        }
+      );
+  }, [items, currentItem]);
 
   return (
     <Content>
       <div className="content__shadowBox">
-        <ShadowBox {...boxShadow} />
+        {items.length > 0 &&
+          items.map(item => (
+            <ShadowBox
+              key={item.id}
+              item={item}
+              onClick={() => updateActiveItem(item.id)}
+              onStop={(e, data) => {
+                e.preventDefault();
+                updateItemPosition(data.x, data.y, item.id);
+              }}
+            />
+          ))}
+
+        <ShadowBox
+          key={currentItem.id}
+          item={currentItem}
+          onStop={(e, data) => {
+            e.preventDefault();
+            updateCurrentItem("x", data.x);
+            updateCurrentItem("y", data.y);
+          }}
+        />
       </div>
 
       <Panel>
+        <button onClick={addNewItem}>Add</button>
+        <button onClick={resetItems}>Reset</button>
+        <p>{currentItem.name}</p>
+        {items.map(item => (
+          <p key={item.id}>{item.name}</p>
+        ))}
         <Range
           label="Horizontal"
-          onChange={val => setBoxShadow(prev => ({ ...prev, horizontal: val }))}
-          value={boxShadow.horizontal}
+          onChange={val => updateCurrentItem("horizontal", val)}
+          value={currentItem.horizontal}
           min={-100}
           suffix="px"
         />
 
         <Range
           label="Vertical"
-          onChange={val => setBoxShadow(prev => ({ ...prev, vertical: val }))}
-          value={boxShadow.vertical}
+          onChange={val => updateCurrentItem("vertical", val)}
+          value={currentItem.vertical}
           min={-100}
           suffix="px"
         />
 
         <Range
           label="Blur"
-          onChange={val => setBoxShadow(prev => ({ ...prev, blur: val }))}
-          value={boxShadow.blur}
+          onChange={val => updateCurrentItem("blur", val)}
+          value={currentItem.blur}
           suffix="px"
         />
 
         <Range
           label="Spread"
-          onChange={val => setBoxShadow(prev => ({ ...prev, spread: val }))}
-          value={boxShadow.spread}
+          onChange={val => updateCurrentItem("spread", val)}
+          value={currentItem.spread}
           min={-100}
           suffix="px"
         />
 
         <Switch
           label="Inset"
-          onChange={val => setBoxShadow(prev => ({ ...prev, inset: val }))}
-          value={boxShadow.inset}
+          onChange={val => updateCurrentItem("inset", val)}
+          value={currentItem.inset}
         />
 
         <hr />
 
         <ColorPicker
           label="Shadow Color"
-          onChange={val => setBoxShadow(prev => ({ ...prev, color: val }))}
-          value={boxShadow.color}
+          onChange={val => updateCurrentItem("color", val)}
+          value={currentItem.color}
         />
 
         <ColorPicker
           label="Background Color"
-          onChange={val => setBoxShadow(prev => ({ ...prev, background: val }))}
-          value={boxShadow.background}
+          onChange={val => updateCurrentItem("background", val)}
+          value={currentItem.background}
         />
 
         <hr />
 
         <Range
           label="Box Width"
-          onChange={val => setBoxShadow(prev => ({ ...prev, width: val }))}
-          value={boxShadow.width}
+          onChange={val => updateCurrentItem("width", val)}
+          value={currentItem.width}
           min={1}
-          max={500}
+          max={1000}
           suffix="px"
         />
 
         <Range
           label="Box Height"
-          onChange={val => setBoxShadow(prev => ({ ...prev, height: val }))}
-          value={boxShadow.height}
+          onChange={val => updateCurrentItem("height", val)}
+          value={currentItem.height}
           min={1}
-          max={500}
+          max={1000}
           suffix="px"
         />
 
         <Range
           label="Border Radius"
-          onChange={val =>
-            setBoxShadow(prev => ({ ...prev, borderRadius: val }))
-          }
-          value={boxShadow.borderRadius}
-          max={50}
-          suffix="%"
+          onChange={val => updateCurrentItem("borderRadius", val)}
+          value={currentItem.borderRadius}
+          max={250}
+          suffix="px"
+        />
+
+        <Range
+          label="Rotation"
+          onChange={val => updateCurrentItem("rotation", val)}
+          value={currentItem.rotation}
+          min={-180}
+          max={180}
+          suffix="°"
         />
       </Panel>
     </Content>
   );
+};
+
+interface Context extends NextPageContext {
+  // any modifications to the default context, e.g. query types
+}
+
+IndexPage.getInitialProps = async (
+  ctx: Context
+): Promise<{ queryConfig: Config }> => {
+  const { query } = ctx;
+
+  let config = {};
+
+  if (query.c) {
+    config = decodeConfig(query.c);
+  }
+
+  return { queryConfig: config };
 };
 
 export default IndexPage;

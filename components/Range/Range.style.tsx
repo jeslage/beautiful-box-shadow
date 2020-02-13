@@ -17,7 +17,7 @@ const StyledRange = styled.label`
     border-bottom: 1px solid transparent;
     outline: none;
     display: inline-block;
-    max-width: 30px;
+    max-width: 40px;
     font-size: inherit;
     padding: 5px 2px 4px;
     font-family: inherit;

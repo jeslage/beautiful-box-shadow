@@ -3,6 +3,8 @@ export interface HandleChange {
 }
 
 export interface BoxShadow {
+  id: number;
+  name: string;
   horizontal: number;
   vertical: number;
   blur: number;
@@ -12,5 +14,16 @@ export interface BoxShadow {
   background: string;
   width: number;
   height: number;
+  rotation: number;
   borderRadius: number;
+}
+
+export interface BoxShadowWithAxis extends BoxShadow {
+  x: number;
+  y: number;
+}
+
+export interface Config {
+  currentItem?: BoxShadowWithAxis;
+  items?: BoxShadowWithAxis[];
 }
