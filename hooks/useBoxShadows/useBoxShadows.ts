@@ -1,12 +1,13 @@
 import { useReducer } from "react";
 import nanoid from "nanoid";
 
-import { BoxShadowWithAxis, Config } from "../../definitions";
+import { BoxShadowWithAxis } from "../../definitions";
 
 import { reducer } from "./reducer";
 
 export const getDefaultBoxShadow = (index: number): BoxShadowWithAxis => ({
   id: nanoid(),
+  active: true,
   name: `Box ${index}`,
   horizontal: 0,
   vertical: 0,
@@ -23,15 +24,8 @@ export const getDefaultBoxShadow = (index: number): BoxShadowWithAxis => ({
   y: 0
 });
 
-const useBoxShadows = (initialConfig: Config) => {
-  const { items: initialItems, currentItem: initialCurrent } = initialConfig;
-
-  const [{ currentItem, items }, dispatch] = useReducer(reducer, {
-    currentItem:
-      initialCurrent ||
-      getDefaultBoxShadow(initialItems ? initialItems.length + 1 : 1),
-    items: initialItems || []
-  });
+const useBoxShadows = (initialConfig: BoxShadowWithAxis[]) => {
+  const [items, dispatch] = useReducer(reducer, initialConfig);
 
   const updateCurrentItem = (
     key: string,
@@ -62,7 +56,8 @@ const useBoxShadows = (initialConfig: Config) => {
 
   return {
     updateCurrentItem,
-    currentItem,
+    currentItem:
+      items && items.length > 0 ? items.filter(item => item.active)[0] : null,
     addNewItem,
     items,
     updateItemPosition,

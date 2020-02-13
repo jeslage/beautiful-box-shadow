@@ -3,7 +3,10 @@ import styled from "styled-components";
 import { useRouter } from "next/router";
 import { NextPage, NextPageContext } from "next";
 
-import useBoxShadows from "../hooks/useBoxShadows/useBoxShadows";
+import useBoxShadows, {
+  getDefaultBoxShadow
+} from "../hooks/useBoxShadows/useBoxShadows";
+
 import { encodeConfig, decodeConfig } from "../helper";
 
 import ShadowBox from "../components/ShadowBox/ShadowBox";
@@ -11,7 +14,7 @@ import Range from "../components/Range/Range";
 import Switch from "../components/Switch/Switch";
 import ColorPicker from "../components/ColorPicker/ColorPicker";
 
-import { Config } from "../definitions";
+import { BoxShadowWithAxis } from "../definitions";
 import useWindowEvent from "../hooks/useWindowEvent";
 
 const Panel = styled.aside`
@@ -49,7 +52,9 @@ const Content = styled.main`
   }
 `;
 
-const IndexPage: NextPage<{ queryConfig: Config }> = ({ queryConfig }) => {
+const IndexPage: NextPage<{ queryConfig: BoxShadowWithAxis[] }> = ({
+  queryConfig
+}) => {
   const router = useRouter();
 
   const {
@@ -73,48 +78,46 @@ const IndexPage: NextPage<{ queryConfig: Config }> = ({ queryConfig }) => {
   useEffect(() => {
     router &&
       router.replace(
-        { pathname: "/", query: { items, currentItem } },
-        `/?c=${encodeConfig({ items, currentItem })}`,
+        { pathname: "/", query: items },
+        `/?c=${encodeConfig(items)}`,
         {
           shallow: true
         }
       );
-  }, [items, currentItem]);
+  }, [items]);
 
   return (
     <Content>
       <div className="content__shadowBox">
         {items.length > 0 &&
-          items.map(item => (
-            <ShadowBox
-              key={item.id}
-              item={item}
-              onClick={() => updateActiveItem(item.id)}
-              onStop={(e, data) => {
-                e.preventDefault();
-                updateItemPosition(data.x, data.y, item.id);
-              }}
-            />
-          ))}
-
-        <ShadowBox
-          key={currentItem.id}
-          item={currentItem}
-          onStop={(e, data) => {
-            e.preventDefault();
-            updateCurrentItem("x", data.x);
-            updateCurrentItem("y", data.y);
-          }}
-        />
+          items
+            .slice(0)
+            .reverse()
+            .map(item => (
+              <ShadowBox
+                key={item.id}
+                item={item}
+                onStart={() => updateActiveItem(item.id)}
+                onStop={(e, data) => {
+                  e.preventDefault();
+                  updateItemPosition(data.x, data.y, item.id);
+                }}
+              />
+            ))}
       </div>
 
       <Panel>
         <button onClick={addNewItem}>Add</button>
         <button onClick={resetItems}>Reset</button>
-        <p>{currentItem.name}</p>
         {items.map(item => (
-          <p key={item.id}>{item.name}</p>
+          <p
+            key={item.id}
+            style={{ fontWeight: item.active ? "bold" : "normal" }}
+          >
+            {item.name}
+          </p>
         ))}
+
         <Range
           label="Horizontal"
           onChange={val => updateCurrentItem("horizontal", val)}
@@ -213,10 +216,10 @@ interface Context extends NextPageContext {
 
 IndexPage.getInitialProps = async (
   ctx: Context
-): Promise<{ queryConfig: Config }> => {
+): Promise<{ queryConfig: BoxShadowWithAxis[] }> => {
   const { query } = ctx;
 
-  let config = {};
+  let config = [getDefaultBoxShadow(1)];
 
   if (query.c) {
     config = decodeConfig(query.c);

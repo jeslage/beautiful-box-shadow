@@ -39,17 +39,21 @@ const StyledShadowBox = styled.div`
 interface ShadowBoxProps {
   item: BoxShadowWithAxis;
   onStop: DraggableEventHandler;
-  onClick?: Function;
+  onStart?: DraggableEventHandler;
 }
 
-const ShadowBox: React.FC<ShadowBoxProps> = ({ onStop, onClick, item }) => {
-  const { x, y, id, name, ...rest } = item;
+const ShadowBox: React.FC<ShadowBoxProps> = ({ onStop, onStart, item }) => {
+  const { x, y, id, ...rest } = item;
   return (
-    <Draggable axis="both" defaultPosition={{ x, y }} scale={1} onStop={onStop}>
-      <StyledShadowBox onClick={() => onClick && onClick()}>
-        <div id={id.toString()} style={getBoxShadow(rest)}>
-          {name}
-        </div>
+    <Draggable
+      axis="both"
+      defaultPosition={{ x, y }}
+      scale={1}
+      onStop={onStop}
+      onStart={onStart}
+    >
+      <StyledShadowBox>
+        <div id={id.toString()} style={getBoxShadow(rest)} />
       </StyledShadowBox>
     </Draggable>
   );

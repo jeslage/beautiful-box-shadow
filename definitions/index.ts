@@ -4,6 +4,7 @@ export interface HandleChange {
 
 export interface BoxShadow {
   id: number;
+  active: boolean;
   name: string;
   horizontal: number;
   vertical: number;
@@ -21,9 +22,4 @@ export interface BoxShadow {
 export interface BoxShadowWithAxis extends BoxShadow {
   x: number;
   y: number;
-}
-
-export interface Config {
-  currentItem?: BoxShadowWithAxis;
-  items?: BoxShadowWithAxis[];
 }
