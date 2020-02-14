@@ -17,6 +17,7 @@ import ColorPicker from '../components/ColorPicker/ColorPicker';
 import { Options } from '../definitions';
 import useWindowEvent from '../hooks/useWindowEvent';
 import useConfig from '../hooks/useConfig/useConfig';
+import LayerList from '../components/LayerList/LayerList';
 
 const Panel = styled.aside`
   position: relative;
@@ -67,7 +68,8 @@ const IndexPage: NextPage<{ options: Options }> = ({ options }) => {
     updateItemPosition,
     updateActiveItem,
     resetItems,
-    duplicateItem
+    duplicateItem,
+    sortItems
   } = useBoxShadows(initialItems);
 
   const { config, updateConfig } = useConfig(initialConfig);
@@ -114,6 +116,13 @@ const IndexPage: NextPage<{ options: Options }> = ({ options }) => {
       <Panel>
         <button onClick={addNewItem}>Add</button>
         <button onClick={resetItems}>Reset</button>
+
+        <LayerList
+          items={items}
+          onSortEnd={sortItems}
+          onSortStart={({ index }) => updateActiveItem(items[index].id)}
+        />
+
         {items.map(item => (
           <div>
             <button

@@ -7,4 +7,5 @@
 - [ ] Add config and boxShadow context
 - [ ] Resizable box
 - [ ] Add groups
-- [ ] Add sorting of layers
+- [x] Add sorting of layers
+- [ ] Add layer stylings
