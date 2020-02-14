@@ -73,8 +73,7 @@ const IndexPage: NextPage<{ options: Options }> = ({ options }) => {
   const { config, updateConfig } = useConfig(initialConfig);
 
   useWindowEvent('keydown', e => {
-    e.preventDefault();
-    if (e.metaKey && e.keyCode === 68) {
+    if (e.keyCode === 68) {
       duplicateItem();
     }
   });
