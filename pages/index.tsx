@@ -110,12 +110,15 @@ const IndexPage: NextPage<{ queryConfig: BoxShadowWithAxis[] }> = ({
         <button onClick={addNewItem}>Add</button>
         <button onClick={resetItems}>Reset</button>
         {items.map(item => (
-          <p
-            key={item.id}
-            style={{ fontWeight: item.active ? "bold" : "normal" }}
-          >
-            {item.name}
-          </p>
+          <div>
+            <button
+              key={item.id}
+              onClick={() => updateActiveItem(item.id)}
+              style={{ fontWeight: item.active ? "bold" : "normal" }}
+            >
+              {item.name}
+            </button>
+          </div>
         ))}
 
         <Range
