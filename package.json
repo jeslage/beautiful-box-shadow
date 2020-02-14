@@ -5,7 +5,7 @@
     "dev": "next",
     "build": "next build",
     "start": "next start",
-    "deploy": "now --name beautiful-box-shadow"
+    "deploy": "now --name beautiful-box-shadow --prod"
   },
   "dependencies": {
     "lz-string": "^1.4.4",

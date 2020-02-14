@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import nanoid from "nanoid";
 
 import { BoxShadowWithAxis } from "../../definitions";
@@ -25,6 +25,7 @@ export const getDefaultBoxShadow = (index: number): BoxShadowWithAxis => ({
 });
 
 const useBoxShadows = (initialConfig: BoxShadowWithAxis[]) => {
+  const [index, setIndex] = useState<number>(1);
   const [items, dispatch] = useReducer(reducer, initialConfig);
 
   const updateCurrentItem = (
@@ -35,7 +36,8 @@ const useBoxShadows = (initialConfig: BoxShadowWithAxis[]) => {
   };
 
   const addNewItem = (): void => {
-    dispatch({ type: "ADD_NEW_ITEM" });
+    setIndex(prev => prev + 1);
+    dispatch({ type: "ADD_NEW_ITEM", index: index + 1 });
   };
 
   const updateItemPosition = (x: number, y: number, id: number) => {
@@ -47,10 +49,12 @@ const useBoxShadows = (initialConfig: BoxShadowWithAxis[]) => {
   };
 
   const duplicateItem = () => {
-    dispatch({ type: "DUPLICATE_ITEM", id: nanoid() });
+    setIndex(prev => prev + 1);
+    dispatch({ type: "DUPLICATE_ITEM", id: nanoid(), index: index + 1 });
   };
 
   const resetItems = () => {
+    setIndex(1);
     dispatch({ type: "RESET_ITEMS" });
   };
 

@@ -14,7 +14,7 @@ export const reducer = (items, action) => {
 
     case "ADD_NEW_ITEM":
       return [
-        getDefaultBoxShadow(items.length + 1),
+        getDefaultBoxShadow(action.index),
         ...items.map(item =>
           item.active
             ? {
@@ -52,7 +52,12 @@ export const reducer = (items, action) => {
     case "DUPLICATE_ITEM":
       const activeItem = items.filter(item => item.active)[0];
       return [
-        { ...activeItem, active: true, id: action.id },
+        {
+          ...activeItem,
+          active: true,
+          id: action.id,
+          name: `Box ${action.index}`
+        },
         ...items.map(item => (item.active ? { ...item, active: false } : item))
       ];
 
