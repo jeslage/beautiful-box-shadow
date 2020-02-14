@@ -81,13 +81,13 @@ const IndexPage: NextPage<{ options: Options }> = ({ options }) => {
   useEffect(() => {
     router &&
       router.replace(
-        { pathname: '/', query: items },
-        `/?c=${encodeConfig(items)}`,
+        { pathname: '/', query: { items, config } },
+        `/?c=${encodeConfig({ items, config })}`,
         {
           shallow: true
         }
       );
-  }, [items]);
+  }, [items, config]);
 
   return (
     <Content>
@@ -233,12 +233,8 @@ const IndexPage: NextPage<{ options: Options }> = ({ options }) => {
   );
 };
 
-interface Context extends NextPageContext {
-  // any modifications to the default context, e.g. query types
-}
-
 IndexPage.getInitialProps = async (
-  ctx: Context
+  ctx: NextPageContext
 ): Promise<{ options: Options }> => {
   const { query } = ctx;
 
