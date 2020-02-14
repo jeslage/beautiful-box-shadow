@@ -3,7 +3,7 @@
 
 ## TODO
 
-- [] Add grid snap support
-- [] Resizable box
-- [] Add groups
-- [] Add sorting of layers
+- [ ] Add grid snap support
+- [ ] Resizable box
+- [ ] Add groups
+- [ ] Add sorting of layers
