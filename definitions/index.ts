@@ -23,3 +23,13 @@ export interface BoxShadowWithAxis extends BoxShadow {
   x: number;
   y: number;
 }
+
+export interface Config {
+  snapToGrid: boolean;
+  gridSize: number;
+}
+
+export interface Options {
+  items: BoxShadowWithAxis[];
+  config: Config;
+}

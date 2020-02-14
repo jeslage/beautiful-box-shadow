@@ -1,9 +1,9 @@
 # Beautiful Box Shadow
 
-
 ## TODO
 
-- [ ] Add grid snap support
+- [x] Add grid snap support
+- [ ] Add config and boxShadow context
 - [ ] Resizable box
 - [ ] Add groups
 - [ ] Add sorting of layers

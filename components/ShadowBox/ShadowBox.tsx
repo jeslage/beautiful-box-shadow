@@ -1,8 +1,8 @@
-import styled from "styled-components";
-import React from "react";
-import Draggable, { DraggableEventHandler } from "react-draggable";
+import styled from 'styled-components';
+import React from 'react';
+import Draggable, { DraggableEventHandler } from 'react-draggable';
 
-import { BoxShadowWithAxis } from "../../definitions";
+import { BoxShadowWithAxis } from '../../definitions';
 
 const getBoxShadow = ({
   blur,
@@ -17,7 +17,7 @@ const getBoxShadow = ({
   borderRadius,
   rotation
 }) => {
-  const i = inset ? "inset" : "";
+  const i = inset ? 'inset' : '';
   const shadow = `${i} ${horizontal}px ${vertical}px ${blur}px ${spread}px ${color}`;
 
   return {
@@ -27,7 +27,7 @@ const getBoxShadow = ({
     boxShadow: shadow,
     transform: `rotate(${rotation}deg)`,
     background,
-    transformOrigin: "center"
+    transformOrigin: 'center'
   };
 };
 
@@ -40,9 +40,17 @@ interface ShadowBoxProps {
   item: BoxShadowWithAxis;
   onStop: DraggableEventHandler;
   onStart?: DraggableEventHandler;
+  snapToGrid: boolean;
+  gridSize: number;
 }
 
-const ShadowBox: React.FC<ShadowBoxProps> = ({ onStop, onStart, item }) => {
+const ShadowBox: React.FC<ShadowBoxProps> = ({
+  onStop,
+  onStart,
+  item,
+  snapToGrid,
+  gridSize
+}) => {
   const { x, y, id, ...rest } = item;
   return (
     <Draggable
@@ -51,6 +59,7 @@ const ShadowBox: React.FC<ShadowBoxProps> = ({ onStop, onStart, item }) => {
       scale={1}
       onStop={onStop}
       onStart={onStart}
+      grid={snapToGrid ? [gridSize, gridSize] : [1, 1]}
     >
       <StyledShadowBox>
         <div id={id.toString()} style={getBoxShadow(rest)} />
