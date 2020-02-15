@@ -26,6 +26,7 @@ const Input: React.FC<Props> = ({
         type="text"
         value={value}
         onChange={event => {
+          console.log(event);
           const { value: eventValue } = event.target;
           onChange(eventValue);
         }}

@@ -3,9 +3,9 @@
 ## TODO
 
 - [x] Add grid snap support
-- [ ] Add testing
+- [ ] Cleanup page
 - [ ] Add config and boxShadow context
 - [ ] Resizable box
-- [ ] Add groups
+- [ ] Debounce replace state due to security issues
 - [x] Add sorting of layers
 - [ ] Add layer stylings

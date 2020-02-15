@@ -8,6 +8,7 @@
     "deploy": "now --name beautiful-box-shadow --prod"
   },
   "dependencies": {
+    "array-move": "^2.2.1",
     "lz-string": "^1.4.4",
     "nanoid": "^2.1.11",
     "next": "latest",

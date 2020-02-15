@@ -1,23 +1,24 @@
-import React, { useEffect } from 'react';
-import styled from 'styled-components';
-import { useRouter } from 'next/router';
-import { NextPage, NextPageContext } from 'next';
+import React, { useEffect } from "react";
+import styled from "styled-components";
+import { useRouter } from "next/router";
+import { NextPage, NextPageContext } from "next";
 
 import useBoxShadows, {
   getDefaultBoxShadow
-} from '../hooks/useBoxShadows/useBoxShadows';
+} from "../hooks/useBoxShadows/useBoxShadows";
 
-import { encodeConfig, decodeConfig } from '../helper';
+import { encodeConfig, decodeConfig } from "../helper";
 
-import ShadowBox from '../components/ShadowBox/ShadowBox';
-import Range from '../components/Range/Range';
-import Switch from '../components/Switch/Switch';
-import ColorPicker from '../components/ColorPicker/ColorPicker';
+import ShadowBox from "../components/ShadowBox/ShadowBox";
+import Range from "../components/Range/Range";
+import Switch from "../components/Switch/Switch";
+import ColorPicker from "../components/ColorPicker/ColorPicker";
 
-import { Options } from '../definitions';
-import useWindowEvent from '../hooks/useWindowEvent';
-import useConfig from '../hooks/useConfig/useConfig';
-import LayerList from '../components/LayerList/LayerList';
+import { Options } from "../definitions";
+import useWindowEvent from "../hooks/useWindowEvent";
+import useConfig from "../hooks/useConfig/useConfig";
+import LayerList from "../components/LayerList/LayerList";
+import Input from "../components/Input/Input";
 
 const Panel = styled.aside`
   position: relative;
@@ -48,6 +49,8 @@ const Content = styled.main`
   overflow: hidden;
 
   .content__shadowBox {
+    width: 100%;
+    height: 100%;
     flex-grow: 2;
     display: flex;
     align-items: center;
@@ -69,12 +72,13 @@ const IndexPage: NextPage<{ options: Options }> = ({ options }) => {
     updateActiveItem,
     resetItems,
     duplicateItem,
-    sortItems
+    sortItems,
+    removeItem
   } = useBoxShadows(initialItems);
 
   const { config, updateConfig } = useConfig(initialConfig);
 
-  useWindowEvent('keydown', e => {
+  useWindowEvent("keydown", e => {
     if (e.keyCode === 68) {
       duplicateItem();
     }
@@ -83,7 +87,7 @@ const IndexPage: NextPage<{ options: Options }> = ({ options }) => {
   useEffect(() => {
     router &&
       router.replace(
-        { pathname: '/', query: { items, config } },
+        { pathname: "/", query: { items, config } },
         `/?c=${encodeConfig({ items, config })}`,
         {
           shallow: true
@@ -114,124 +118,132 @@ const IndexPage: NextPage<{ options: Options }> = ({ options }) => {
       </div>
 
       <Panel>
-        <button onClick={addNewItem}>Add</button>
+        <button disabled={items.length >= 50} onClick={addNewItem}>
+          Add
+        </button>
         <button onClick={resetItems}>Reset</button>
 
         <LayerList
           items={items}
           onSortEnd={sortItems}
+          lockAxis="y"
+          useDragHandle
+          helperClass="dragging-helper-class"
           onSortStart={({ index }) => updateActiveItem(items[index].id)}
+          onDelete={removeItem}
+          onClick={updateActiveItem}
         />
 
-        {items.map(item => (
-          <div>
-            <button
-              key={item.id}
-              onClick={() => updateActiveItem(item.id)}
-              style={{ fontWeight: item.active ? 'bold' : 'normal' }}
-            >
-              {item.name}
-            </button>
-          </div>
-        ))}
+        {currentItem ? (
+          <>
+            <Input
+              label="Name"
+              value={currentItem.name}
+              onChange={val => updateCurrentItem("name", val)}
+            />
+            <Range
+              label="Horizontal"
+              onChange={val => updateCurrentItem("horizontal", val)}
+              value={currentItem.horizontal}
+              min={-100}
+              suffix="px"
+            />
 
-        <Range
-          label="Horizontal"
-          onChange={val => updateCurrentItem('horizontal', val)}
-          value={currentItem.horizontal}
-          min={-100}
-          suffix="px"
-        />
+            <Range
+              label="Vertical"
+              onChange={val => updateCurrentItem("vertical", val)}
+              value={currentItem.vertical}
+              min={-100}
+              suffix="px"
+            />
 
-        <Range
-          label="Vertical"
-          onChange={val => updateCurrentItem('vertical', val)}
-          value={currentItem.vertical}
-          min={-100}
-          suffix="px"
-        />
+            <Range
+              label="Blur"
+              onChange={val => updateCurrentItem("blur", val)}
+              value={currentItem.blur}
+              suffix="px"
+            />
 
-        <Range
-          label="Blur"
-          onChange={val => updateCurrentItem('blur', val)}
-          value={currentItem.blur}
-          suffix="px"
-        />
+            <Range
+              label="Spread"
+              onChange={val => updateCurrentItem("spread", val)}
+              value={currentItem.spread}
+              min={-100}
+              suffix="px"
+            />
 
-        <Range
-          label="Spread"
-          onChange={val => updateCurrentItem('spread', val)}
-          value={currentItem.spread}
-          min={-100}
-          suffix="px"
-        />
+            <Switch
+              label="Inset"
+              onChange={val => updateCurrentItem("inset", val)}
+              value={currentItem.inset}
+            />
 
-        <Switch
-          label="Inset"
-          onChange={val => updateCurrentItem('inset', val)}
-          value={currentItem.inset}
-        />
+            <hr />
+
+            <ColorPicker
+              label="Shadow Color"
+              onChange={val => updateCurrentItem("color", val)}
+              value={currentItem.color}
+            />
+
+            <ColorPicker
+              label="Background Color"
+              onChange={val => updateCurrentItem("background", val)}
+              value={currentItem.background}
+            />
+
+            <hr />
+
+            <Range
+              label="Box Width"
+              onChange={val => updateCurrentItem("width", val)}
+              value={currentItem.width}
+              steps={config.snapToGrid ? config.gridSize : 1}
+              max={1000}
+              suffix="px"
+            />
+
+            <Range
+              label="Box Height"
+              onChange={val => updateCurrentItem("height", val)}
+              value={currentItem.height}
+              steps={config.snapToGrid ? config.gridSize : 1}
+              max={1000}
+              suffix="px"
+            />
+
+            <Range
+              label="Border Radius"
+              onChange={val => updateCurrentItem("borderRadius", val)}
+              value={currentItem.borderRadius}
+              max={500}
+              suffix="px"
+            />
+
+            <Range
+              label="Rotation"
+              onChange={val => updateCurrentItem("rotation", val)}
+              value={currentItem.rotation}
+              min={-180}
+              max={180}
+              suffix="°"
+            />
+          </>
+        ) : (
+          <p>No element</p>
+        )}
 
         <hr />
 
-        <ColorPicker
-          label="Shadow Color"
-          onChange={val => updateCurrentItem('color', val)}
-          value={currentItem.color}
-        />
-
-        <ColorPicker
-          label="Background Color"
-          onChange={val => updateCurrentItem('background', val)}
-          value={currentItem.background}
-        />
-
-        <hr />
-
-        <Range
-          label="Box Width"
-          onChange={val => updateCurrentItem('width', val)}
-          value={currentItem.width}
-          min={1}
-          max={1000}
-          suffix="px"
-        />
-
-        <Range
-          label="Box Height"
-          onChange={val => updateCurrentItem('height', val)}
-          value={currentItem.height}
-          min={1}
-          max={1000}
-          suffix="px"
-        />
-
-        <Range
-          label="Border Radius"
-          onChange={val => updateCurrentItem('borderRadius', val)}
-          value={currentItem.borderRadius}
-          max={250}
-          suffix="px"
-        />
-
-        <Range
-          label="Rotation"
-          onChange={val => updateCurrentItem('rotation', val)}
-          value={currentItem.rotation}
-          min={-180}
-          max={180}
-          suffix="°"
-        />
-
-        <hr />
         <Switch
           label="Snap to grid"
-          onChange={val => updateConfig('snapToGrid', val)}
+          onChange={val => updateConfig("snapToGrid", val)}
           value={config.snapToGrid}
         />
+
         <Range
           label="Grid size"
-          onChange={val => updateConfig('gridSize', val)}
+          onChange={val => updateConfig("gridSize", val)}
           value={config.gridSize}
           min={5}
           max={100}

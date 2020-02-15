@@ -1,10 +1,10 @@
-import { useReducer, useState } from 'react';
-import { arrayMove } from 'react-sortable-hoc';
-import nanoid from 'nanoid';
+import { useReducer, useState } from "react";
+import arrayMove from "array-move";
+import nanoid from "nanoid";
 
-import { BoxShadowWithAxis } from '../../definitions';
+import { BoxShadowWithAxis } from "../../definitions";
 
-import { reducer } from './reducer';
+import { reducer } from "./reducer";
 
 export const getDefaultBoxShadow = (index: number): BoxShadowWithAxis => ({
   id: nanoid(),
@@ -15,8 +15,8 @@ export const getDefaultBoxShadow = (index: number): BoxShadowWithAxis => ({
   blur: 30,
   spread: 0,
   inset: true,
-  color: '#999',
-  background: '#fff',
+  color: "#999",
+  background: "#fff",
   width: 200,
   height: 200,
   borderRadius: 0,
@@ -26,42 +26,49 @@ export const getDefaultBoxShadow = (index: number): BoxShadowWithAxis => ({
 });
 
 const useBoxShadows = (initialConfig: BoxShadowWithAxis[]) => {
-  const [index, setIndex] = useState<number>(1);
+  const [index, setIndex] = useState<number>(initialConfig.length);
   const [items, dispatch] = useReducer(reducer, initialConfig);
 
   const updateCurrentItem = (
     key: string,
     value: number | boolean | string
   ): void => {
-    dispatch({ type: 'UPDATE_CURRENT_ITEM', key, value });
+    dispatch({ type: "UPDATE_CURRENT_ITEM", key, value });
   };
 
   const addNewItem = (): void => {
     setIndex(prev => prev + 1);
-    dispatch({ type: 'ADD_NEW_ITEM', index: index + 1 });
+    dispatch({ type: "ADD_NEW_ITEM", index: index + 1 });
   };
 
   const updateItemPosition = (x: number, y: number, id: number) => {
-    dispatch({ type: 'UPDATE_ITEM_POSITION', x, y, id });
+    dispatch({ type: "UPDATE_ITEM_POSITION", x, y, id });
   };
 
   const updateActiveItem = (id: number) => {
-    dispatch({ type: 'UPDATE_ACTIVE_ITEM', id });
+    dispatch({ type: "UPDATE_ACTIVE_ITEM", id });
   };
 
   const duplicateItem = () => {
     setIndex(prev => prev + 1);
-    dispatch({ type: 'DUPLICATE_ITEM', id: nanoid(), index: index + 1 });
+    dispatch({ type: "DUPLICATE_ITEM", id: nanoid(), index: index + 1 });
+  };
+
+  const removeItem = (id: number) => {
+    if (items.length >= 1) {
+      setIndex(prev => prev - 1);
+      dispatch({ type: "REMOVE_ITEM", id });
+    }
   };
 
   const resetItems = () => {
     setIndex(1);
-    dispatch({ type: 'RESET_ITEMS' });
+    dispatch({ type: "RESET_ITEMS" });
   };
 
   const sortItems = ({ oldIndex, newIndex }) => {
     dispatch({
-      type: 'SORT_ITEMS',
+      type: "SORT_ITEMS",
       items: arrayMove(items, oldIndex, newIndex)
     });
   };
@@ -76,7 +83,8 @@ const useBoxShadows = (initialConfig: BoxShadowWithAxis[]) => {
     updateActiveItem,
     resetItems,
     sortItems,
-    duplicateItem
+    duplicateItem,
+    removeItem
   };
 };
 
