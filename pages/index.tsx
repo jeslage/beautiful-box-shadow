@@ -26,7 +26,7 @@ const Panel = styled.aside`
   max-width: 400px;
   height: 100vh;
   width: 100%;
-  background: #f4f4f4;
+  background: ${props => props.theme.backgroundDark};
   overflow-y: scroll;
   display: flex;
   flex-direction: column;

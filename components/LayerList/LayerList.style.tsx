@@ -3,9 +3,10 @@ import styled from "styled-components";
 export const StyledLayerList = styled.ul`
   margin: 0;
   padding: 0;
-  max-height: 150px;
+  height: 150px;
   overflow-y: scroll;
-  border-bottom: 1px solid ${props => props.theme.border};
+  width: 100%;
+  border-top: 1px solid ${props => props.theme.border};
 `;
 
 export const StyledHandle = styled.svg`
@@ -34,12 +35,12 @@ export const StyledListItem = styled.li<ListItemProps>`
     isActive ? theme.backgroundDark : theme.backgroundLight};
   display: flex;
   align-items: center;
-  border-left: 4px solid
-    ${props => (props.isActive ? "blue" : props.theme.border)};
+  border-bottom: 1px solid ${props => props.theme.border};
+  border-left: 4px solid ${props => props.theme.border};
   user-select: none;
 
   &.dragging-helper-class {
-    border-color: blue;
+    border-color: ${props => props.theme.backgroundDark};
     box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.25);
   }
 
@@ -53,6 +54,7 @@ export const StyledListItem = styled.li<ListItemProps>`
     border: none;
     flex-grow: 2;
     color: ${props => props.theme.text};
+    font-weight: ${props => props.isActive && "bold"};
   }
 
   .listItem__delete {
