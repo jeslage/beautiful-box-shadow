@@ -92,14 +92,19 @@ const IndexPage: NextPage<{ options: Options }> = ({ options }) => {
   });
 
   useEffect(() => {
-    router &&
-      router.replace(
-        { pathname: "/", query: { items, config } },
-        `/?c=${encodeConfig({ items, config })}`,
-        {
-          shallow: true
-        }
-      );
+    const timeout = setTimeout(() => {
+      router &&
+        router.replace(
+          { pathname: "/", query: { items, config } },
+          `/?c=${encodeConfig({ items, config })}`,
+          {
+            shallow: true
+          }
+        );
+    }, 1500);
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [items, config]);
 
   return (

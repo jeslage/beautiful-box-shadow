@@ -6,6 +6,6 @@
 - [ ] Cleanup page
 - [ ] Add config and boxShadow context
 - [ ] Resizable box
-- [ ] Debounce replace state due to security issues
+- [x] Debounce replace state due to security issues
 - [x] Add sorting of layers
 - [ ] Add layer stylings
