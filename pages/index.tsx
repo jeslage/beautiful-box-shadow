@@ -63,6 +63,26 @@ const Content = styled.main`
     align-items: center;
     justify-content: center;
   }
+
+  .content__buttons {
+    display: flex;
+  }
+
+  .content__add,
+  .content__reset {
+    width: 50%;
+    border: 0;
+    outline: 0;
+    padding: 20px;
+    cursor: pointer;
+    text-transform: uppercase;
+    color: ${props => props.theme.backgroundDark};
+    background: ${props => props.theme.border};
+  }
+
+  .content__add {
+    border-right: 1px solid ${props => props.theme.backgroundDark};
+  }
 `;
 
 const IndexPage: NextPage<{ options: Options }> = ({ options }) => {
@@ -258,10 +278,19 @@ const IndexPage: NextPage<{ options: Options }> = ({ options }) => {
           onDelete={removeItem}
           onClick={updateActiveItem}
         />
-        <button disabled={items.length >= 50} onClick={addNewItem}>
-          Add
-        </button>
-        <button onClick={resetItems}>Reset</button>
+        <div className="content__buttons">
+          <button
+            className="content__add"
+            type="button"
+            disabled={items.length >= 50}
+            onClick={addNewItem}
+          >
+            Add
+          </button>
+          <button className="content__reset" type="button" onClick={resetItems}>
+            Reset
+          </button>
+        </div>
       </Panel>
     </Content>
   );
