@@ -10,7 +10,7 @@
   "dependencies": {
     "array-move": "^2.2.1",
     "lz-string": "^1.4.4",
-    "nanoid": "^2.1.11",
+    "nanoid": "^3.1.31",
     "next": "latest",
     "react": "16.8.6",
     "react-color": "^2.18.0",
